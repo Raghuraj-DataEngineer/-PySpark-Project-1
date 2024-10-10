@@ -1,0 +1,58 @@
+to start cassandra type
+> cassandra -f
+
+open new terminal tpye 
+
+>  cqlsh
+
+follow below code 
+
+To see keyspaces type
+
+> describe keyspaces;
+
+To drop keyspaces type
+
+> drop keyspace air;
+
+To drop table type
+
+> drop table emp3;
+
+CREATE KEYSPACE empinfo
+WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 1};
+
+USE empinfo;
+
+
+CREATE TABLE emp(
+   emp_id int PRIMARY KEY,
+   emp_name text,
+   emp_city text,
+   emp_sal varint,
+   emp_phone varint
+   );
+
+
+select * from emp;
+
+
+INSERT INTO emp (emp_id, emp_name, emp_city,
+   emp_phone, emp_sal) VALUES(1,'ram', 'Hyderabad', 7348027338, 50000);
+
+INSERT INTO emp (emp_id, emp_name, emp_city,
+   emp_phone, emp_sal) VALUES(2,'robin', 'Hyderabad', 9848022339, 40000);
+
+INSERT INTO emp (emp_id, emp_name, emp_city,
+   emp_phone, emp_sal) VALUES(3,'amit', 'Hyderabad', 9848327338, 25000);
+
+INSERT INTO emp (emp_id, emp_name, emp_city,
+   emp_phone, emp_sal) VALUES(4,'nikhil', 'Hyderabad', 9848022299, 45000);
+
+INSERT INTO emp (emp_id, emp_name, emp_city,
+   emp_phone, emp_sal) VALUES(5,'uday', 'Hyderabad', 9848917338, 35000);
+
+INSERT INTO emp (emp_id, emp_name, emp_city,
+   emp_phone, emp_sal) VALUES(6,'deepak', 'Hyderabad', 9038022339, 20000);
+
+SELECT * FROM emp;

@@ -1,0 +1,107 @@
+
+-- Create t2.2xlarge ec2 instance with Amazon Linux 2 AMI (HVM)
+Storage- 96 GB
+Allow ports- 0-10000
+
+-- Connect to the instance using SSH
+
+ssh -i "demo_hive_1.pem" ec2-user@ec2-3-92-175-216.compute-1.amazonaws.com
+
+-- Install and setup Docker and Docker-compose
+
+sudo yum update -y
+sudo yum install docker
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo gpasswd -a $USER docker
+newgrp docker
+
+
+docker
+docker-compose
+
+-- Start Docker
+sudo systemctl start docker
+
+-- Copy folder from local to ec2 and give required permissions
+
+scp -r -i "demo_hive_1.pem" docker_exp ec2-user@ec2-3-92-175-216.compute-1.amazonaws.com:/home/ec2-user/docker_exp
+sudo chmod -R 755 docker_exp
+cd docker_exp
+
+-- Start docker containers
+docker-compose up
+
+-- Port Forwarding to access services locally
+
+ssh -i "demo_hive_1.pem" ec2-user@ec2-3-92-175-216.compute-1.amazonaws.com -o "ServerAliveInterval 30" -L 2081:localhost:2041 -L 4888:localhost:4888 -L 4889:localhost:4889 -L 2080:localhost:2080 -L 8050:localhost:8050 -L 8051:localhost:8051 -L 4141:localhost:4141 -L 4090:localhost:4090 -L 3180:localhost:3180 -L 50075:localhost:50075 -L 50070:localhost:50070 -L 50010:localhost:50010 -L 3077:localhost:3077 -L 4080:localhost:4080 -L 9870:localhost:9870 -L 8188:localhost:8188 -L 9864:localhost:9864 -L 8042:localhost:8042 -L 8088:localhost:8088 -L 8080:localhost:8080 -L 8081:localhost:8081 -L 10000:localhost:10000 -L 6080:localhost:6080 -L 8998:localhost:8998 -L 3306:localhost:3306
+
+-- Check status of all running containers and get their ports and names
+docker ps
+
+-- To get into bash shell of different containers
+
+docker exec -i -t ra_mysql bash
+docker exec -i -t ra_sqoop bash
+docker exec -i -t ra_hive-server bash
+docker exec -i -t hdp_spark-master bash
+docker exec -i -t docker_exp_redis_1 bash
+
+mysql -u root -p
+example
+
+-- Stop docker containers
+docker-compose stop
+
+-- Stop Docker
+sudo systemctl stop docker
+
+-- Remove docker containers
+docker-compose down (stop and remove containers)
+
+-- Command to move jar file from local machine to ec2 machine
+scp -r -i "demo_hive_1.pem" postgresql-42.3.1.jar ec2-user@ec2-3-92-175-216.compute-1.amazonaws.com:/home/ec2-user/
+
+-- Command to move jar file from ec2 machine to Spark container =>
+docker cp /home/ec2-user/postgresql-42.3.1.jar hdp_spark-master:/spark/jars
+
+-- Command to copy hive-site.xml file from Hive container and paste it in ec2 machine =>
+docker cp ra_hive-server:/opt/hive/conf/hive-site.xml /home/ec2-user
+
+-- Command to copy hive-site.xml file from ec2 machine and paste it in Spark container =>
+docker cp /home/ec2-user/hive-site.xml hdp_spark-master:/spark/conf
+
+-- Command to copy data from local machine and paste it in ec2 machine
+scp -r -i "demo_hive_1.pem" movies.item ec2-user@ec2-3-92-175-216.compute-1.amazonaws.com:/home/ec2-user/
+
+-- Command to move data from ec2 machine to Spark container =>
+docker cp /home/ec2-user/movies.item hdp_spark-master:/spark/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
